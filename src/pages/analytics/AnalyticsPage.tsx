@@ -1,13 +1,10 @@
+import type { ReactNode } from 'react';
 import { Users, GraduationCap, BookOpen, UserCircle, TrendingUp, Activity } from 'lucide-react';
 import { KPICard } from '../../app/components/shared/KPICard';
 import { Card } from '../../app/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../app/components/ui/tabs';
-import { AreaChartComponent } from '../../charts/AreaChartComponent';
-import { BarChartComponent } from '../../charts/BarChartComponent';
-import { DonutChartComponent } from '../../charts/DonutChartComponent';
-import { LineChartComponent } from '../../charts/LineChartComponent';
 import { DataTable } from '../../app/components/shared/DataTable';
-import { mockAnalyticsData, mockStudents, mockMentors, mockTeachers, mockParents } from '../../mock/data/mockData';
+import { mockAnalyticsData, mockMentors, mockTeachers, mockParents } from '../../mock/data/mockData';
 import { useThemeStore } from '../../store/useThemeStore';
 import { Progress } from '../../app/components/ui/progress';
 import { Badge } from '../../app/components/ui/badge';
@@ -47,83 +44,27 @@ export function AnalyticsPage() {
   ];
 
   const genderData = [
-    { name: 'Male', value: mockAnalyticsData.studentAnalytics.genderDistribution.male },
-    { name: 'Female', value: mockAnalyticsData.studentAnalytics.genderDistribution.female },
-    { name: 'Other', value: mockAnalyticsData.studentAnalytics.genderDistribution.other },
+    { label: 'Male', value: mockAnalyticsData.studentAnalytics.genderDistribution.male, color: '#25476a' },
+    { label: 'Female', value: mockAnalyticsData.studentAnalytics.genderDistribution.female, color: '#feb139' },
+    { label: 'Other', value: mockAnalyticsData.studentAnalytics.genderDistribution.other, color: '#38aae1' },
   ];
 
   const studentTypeData = [
-    { name: 'Online', value: mockAnalyticsData.studentAnalytics.byType.online },
-    { name: 'Offline', value: mockAnalyticsData.studentAnalytics.byType.offline },
-    { name: 'Adult', value: mockAnalyticsData.studentAnalytics.byType.adult },
-    { name: 'Normal', value: mockAnalyticsData.studentAnalytics.byType.normal },
+    { label: 'Online', value: mockAnalyticsData.studentAnalytics.byType.online, color: '#25476a' },
+    { label: 'Offline', value: mockAnalyticsData.studentAnalytics.byType.offline, color: '#feb139' },
+    { label: 'Adult', value: mockAnalyticsData.studentAnalytics.byType.adult, color: '#38aae1' },
+    { label: 'Normal', value: mockAnalyticsData.studentAnalytics.byType.normal, color: '#6B7280' },
   ];
 
-  const studentColumns = [
-    { key: 'name', header: 'Name', sortable: true },
-    { key: 'email', header: 'Email', sortable: true },
-    { key: 'classType', header: 'Class', sortable: true },
-    { key: 'studentType', header: 'Type', sortable: true },
-    {
-      key: 'status',
-      header: 'Status',
-      sortable: true,
-      render: (student: any) => (
-        <Badge variant={student.status === 'active' ? 'default' : 'secondary'}>
-          {student.status}
-        </Badge>
-      ),
-    },
-    {
-      key: 'assignmentCompletionRate',
-      header: 'Completion Rate',
-      sortable: true,
-      render: (student: any) => `${student.assignmentCompletionRate}%`,
-    },
+  const studentStatusData = [
+    { label: 'Total', value: mockAnalyticsData.studentAnalytics.total, color: '#25476a' },
+    { label: 'Active', value: mockAnalyticsData.studentAnalytics.active, color: '#38aae1' },
+    { label: 'Inactive', value: mockAnalyticsData.studentAnalytics.inactive, color: '#6B7280' },
   ];
 
-  const mentorColumns = [
-    { key: 'name', header: 'Name', sortable: true },
-    { key: 'email', header: 'Email', sortable: true },
-    {
-      key: 'status',
-      header: 'Status',
-      sortable: true,
-      render: (mentor: any) => (
-        <Badge variant={mentor.status === 'active' ? 'default' : 'secondary'}>
-          {mentor.status}
-        </Badge>
-      ),
-    },
-    {
-      key: 'loginRate90Days',
-      header: 'Login Rate (90d)',
-      sortable: true,
-      render: (mentor: any) => `${mentor.loginRate90Days}%`,
-    },
-    { key: 'studentsAssigned', header: 'Students', sortable: true },
-  ];
-
-  const teacherColumns = [
-    { key: 'name', header: 'Name', sortable: true },
-    { key: 'email', header: 'Email', sortable: true },
-    {
-      key: 'status',
-      header: 'Status',
-      sortable: true,
-      render: (teacher: any) => (
-        <Badge variant={teacher.status === 'active' ? 'default' : 'secondary'}>
-          {teacher.status}
-        </Badge>
-      ),
-    },
-    {
-      key: 'loginRate90Days',
-      header: 'Login Rate (90d)',
-      sortable: true,
-      render: (teacher: any) => `${teacher.loginRate90Days}%`,
-    },
-    { key: 'classesAssigned', header: 'Classes', sortable: true },
+  const assignmentPerformanceData = [
+    { label: 'Completion Rate', value: mockAnalyticsData.studentAnalytics.assignmentCompletionRate, color: '#25476a' },
+    { label: 'Retry Rate', value: mockAnalyticsData.studentAnalytics.assignmentRetryRate, color: '#feb139' },
   ];
 
   const renderUserSummaryCard = ({
@@ -194,6 +135,75 @@ export function AnalyticsPage() {
     </Card>
   );
 
+  const renderMetricTiles = (
+    items: Array<{ label: string; value: number; color: string }>,
+    total: number,
+    valueSuffix = ''
+  ) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      {items.map((item) => {
+        const progress = valueSuffix ? item.value : Math.round((item.value / total) * 100);
+
+        return (
+          <div
+            key={item.label}
+            className={`rounded-lg border px-4 py-3.5 transition-shadow hover:shadow-sm ${
+              isDark ? 'border-gray-700 bg-gray-900/40' : 'border-gray-200 bg-white'
+            }`}
+          >
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{item.label}</p>
+                <p className="text-2xl leading-none" style={{ color: item.color }}>
+                  {item.value.toLocaleString()}{valueSuffix}
+                </p>
+              </div>
+              <span className={`pb-1 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{progress}%</span>
+            </div>
+            <div className={`mt-3 h-1.5 overflow-hidden rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: item.color,
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  const renderStudentMetricCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+    children,
+  }: {
+    title: string;
+    value: string | number;
+    icon: typeof Users;
+    color: string;
+    children: ReactNode;
+  }) => (
+    <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6 lg:items-center">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-lg shrink-0" style={{ backgroundColor: `${color}20` }}>
+            <Icon size={24} style={{ color }} />
+          </div>
+          <div>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{title}</p>
+            <h3 className={`mt-1 text-3xl ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</h3>
+          </div>
+        </div>
+        {children}
+      </div>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -241,74 +251,39 @@ export function AnalyticsPage() {
         </TabsList>
 
         <TabsContent value="students" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <KPICard
-              title="Total Students"
-              value={mockAnalyticsData.studentAnalytics.total}
-              icon={GraduationCap}
-              color="#25476a"
-            />
-            <KPICard
-              title="Active Students"
-              value={mockAnalyticsData.studentAnalytics.active}
-              icon={Activity}
-              color="#38aae1"
-            />
-            <KPICard
-              title="Assignment Completion"
-              value={`${mockAnalyticsData.studentAnalytics.assignmentCompletionRate}%`}
-              icon={TrendingUp}
-              color="#feb139"
-            />
-            <KPICard
-              title="Assignment Retry Rate"
-              value={`${mockAnalyticsData.studentAnalytics.assignmentRetryRate}%`}
-              icon={BookOpen}
-              color="#25476a"
-            />
+          <div className="space-y-4">
+            {renderStudentMetricCard({
+              title: 'Student Summary',
+              value: mockAnalyticsData.studentAnalytics.total.toLocaleString(),
+              icon: GraduationCap,
+              color: '#25476a',
+              children: renderMetricTiles(studentStatusData, mockAnalyticsData.studentAnalytics.total),
+            })}
+
+            {renderStudentMetricCard({
+              title: 'Student Type',
+              value: mockAnalyticsData.studentAnalytics.total.toLocaleString(),
+              icon: Users,
+              color: '#feb139',
+              children: renderMetricTiles(studentTypeData, mockAnalyticsData.studentAnalytics.total),
+            })}
+
+            {renderStudentMetricCard({
+              title: 'Assignment Performance',
+              value: `${mockAnalyticsData.studentAnalytics.assignmentCompletionRate}%`,
+              icon: TrendingUp,
+              color: '#38aae1',
+              children: renderMetricTiles(assignmentPerformanceData, 100, '%'),
+            })}
+
+            {renderStudentMetricCard({
+              title: 'Gender',
+              value: mockAnalyticsData.studentAnalytics.total.toLocaleString(),
+              icon: UserCircle,
+              color: '#6B7280',
+              children: renderMetricTiles(genderData, mockAnalyticsData.studentAnalytics.total),
+            })}
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-              <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Gender Distribution</h3>
-              <DonutChartComponent
-                data={genderData}
-                colors={['#25476a', '#feb139', '#38aae1']}
-                height={280}
-              />
-            </Card>
-
-            <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-              <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Student Types</h3>
-              <DonutChartComponent
-                data={studentTypeData}
-                colors={['#25476a', '#feb139', '#38aae1', '#6B7280']}
-                height={280}
-              />
-            </Card>
-          </div>
-
-          <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Assignment Trends</h3>
-            <LineChartComponent
-              data={mockAnalyticsData.chartData.assignmentTrends}
-              xKey="week"
-              lines={[
-                { dataKey: 'completionRate', color: '#25476a', name: 'Completion Rate' },
-                { dataKey: 'retryRate', color: '#feb139', name: 'Retry Rate' },
-              ]}
-              height={300}
-            />
-          </Card>
-
-          <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>All Students</h3>
-            <DataTable
-              data={mockStudents.slice(0, 50)}
-              columns={studentColumns}
-              searchPlaceholder="Search students..."
-            />
-          </Card>
         </TabsContent>
 
         <TabsContent value="mentors" className="space-y-6">
@@ -333,14 +308,46 @@ export function AnalyticsPage() {
             />
           </div>
 
-          <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>All Mentors</h3>
-            <DataTable
-              data={mockMentors}
-              columns={mentorColumns}
-              searchPlaceholder="Search mentors..."
-            />
-          </Card>
+          <div className="space-y-4">
+            <h3 className={`text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>Mentors</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {mockMentors.map((mentor) => (
+                <Card
+                  key={mentor.id}
+                  className={`p-5 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h4 className={`truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{mentor.name}</h4>
+                      <p className={`mt-1 truncate text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{mentor.email}</p>
+                    </div>
+                    <Badge variant={mentor.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
+                      {mentor.status}
+                    </Badge>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Students</p>
+                      <p className={`mt-1 text-2xl ${isDark ? 'text-white' : 'text-gray-900'}`}>{mentor.studentsAssigned}</p>
+                    </div>
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Login Rate</p>
+                      <p className="mt-1 text-2xl" style={{ color: '#38aae1' }}>{mentor.loginRate90Days}%</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Last 90 days</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{mentor.loginRate90Days}%</span>
+                    </div>
+                    <Progress value={mentor.loginRate90Days} />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="teachers" className="space-y-6">
@@ -365,14 +372,46 @@ export function AnalyticsPage() {
             />
           </div>
 
-          <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>All Teachers</h3>
-            <DataTable
-              data={mockTeachers}
-              columns={teacherColumns}
-              searchPlaceholder="Search teachers..."
-            />
-          </Card>
+          <div className="space-y-4">
+            <h3 className={`text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>Teachers</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {mockTeachers.map((teacher) => (
+                <Card
+                  key={teacher.id}
+                  className={`p-5 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h4 className={`truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{teacher.name}</h4>
+                      <p className={`mt-1 truncate text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{teacher.email}</p>
+                    </div>
+                    <Badge variant={teacher.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
+                      {teacher.status}
+                    </Badge>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Classes</p>
+                      <p className={`mt-1 text-2xl ${isDark ? 'text-white' : 'text-gray-900'}`}>{teacher.classesAssigned}</p>
+                    </div>
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Login Rate</p>
+                      <p className="mt-1 text-2xl" style={{ color: '#38aae1' }}>{teacher.loginRate90Days}%</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Last 90 days</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{teacher.loginRate90Days}%</span>
+                    </div>
+                    <Progress value={teacher.loginRate90Days} />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="parents" className="space-y-6">
@@ -397,32 +436,43 @@ export function AnalyticsPage() {
             />
           </div>
 
-          <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>All Parents</h3>
-            <DataTable
-              data={mockParents.slice(0, 50)}
-              columns={[
-                { key: 'name', header: 'Name', sortable: true },
-                { key: 'email', header: 'Email', sortable: true },
-                {
-                  key: 'status',
-                  header: 'Status',
-                  sortable: true,
-                  render: (parent: any) => (
-                    <Badge variant={parent.status === 'active' ? 'default' : 'secondary'}>
+          <div className="space-y-4">
+            <h3 className={`text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>Parents</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {mockParents.slice(0, 50).map((parent) => (
+                <Card
+                  key={parent.id}
+                  className={`p-5 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h4 className={`truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{parent.name}</h4>
+                      <p className={`mt-1 truncate text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{parent.email}</p>
+                    </div>
+                    <Badge variant={parent.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
                       {parent.status}
                     </Badge>
-                  ),
-                },
-                {
-                  key: 'studentsLinked',
-                  header: 'Linked Students',
-                  render: (parent: any) => parent.studentsLinked.length,
-                },
-              ]}
-              searchPlaceholder="Search parents..."
-            />
-          </Card>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Linked Students</p>
+                      <p className={`mt-1 text-2xl ${isDark ? 'text-white' : 'text-gray-900'}`}>{parent.studentsLinked.length}</p>
+                    </div>
+                    <div>
+                      <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Status</p>
+                      <p
+                        className="mt-1 text-2xl capitalize"
+                        style={{ color: parent.status === 'active' ? '#38aae1' : '#6B7280' }}
+                      >
+                        {parent.status}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
