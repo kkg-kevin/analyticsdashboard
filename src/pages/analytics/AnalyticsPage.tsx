@@ -15,6 +15,36 @@ import { Badge } from '../../app/components/ui/badge';
 export function AnalyticsPage() {
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
+  const roleMetrics = [
+    {
+      label: 'Students',
+      total: mockAnalyticsData.userAnalytics.usersByRole.students,
+      active: mockAnalyticsData.studentAnalytics.active,
+      inactive: mockAnalyticsData.studentAnalytics.inactive,
+      color: '#25476a',
+    },
+    {
+      label: 'Mentors',
+      total: mockAnalyticsData.userAnalytics.usersByRole.mentors,
+      active: mockAnalyticsData.mentorAnalytics.active,
+      inactive: mockAnalyticsData.mentorAnalytics.inactive,
+      color: '#feb139',
+    },
+    {
+      label: 'Teachers',
+      total: mockAnalyticsData.userAnalytics.usersByRole.teachers,
+      active: mockAnalyticsData.teacherAnalytics.active,
+      inactive: mockAnalyticsData.teacherAnalytics.inactive,
+      color: '#38aae1',
+    },
+    {
+      label: 'Parents',
+      total: mockAnalyticsData.userAnalytics.usersByRole.parents,
+      active: mockAnalyticsData.parentAnalytics.active,
+      inactive: mockAnalyticsData.parentAnalytics.inactive,
+      color: '#6B7280',
+    },
+  ];
 
   const genderData = [
     { name: 'Male', value: mockAnalyticsData.studentAnalytics.genderDistribution.male },
@@ -27,13 +57,6 @@ export function AnalyticsPage() {
     { name: 'Offline', value: mockAnalyticsData.studentAnalytics.byType.offline },
     { name: 'Adult', value: mockAnalyticsData.studentAnalytics.byType.adult },
     { name: 'Normal', value: mockAnalyticsData.studentAnalytics.byType.normal },
-  ];
-
-  const roleDistributionData = [
-    { name: 'Students', value: mockAnalyticsData.userAnalytics.usersByRole.students },
-    { name: 'Mentors', value: mockAnalyticsData.userAnalytics.usersByRole.mentors },
-    { name: 'Teachers', value: mockAnalyticsData.userAnalytics.usersByRole.teachers },
-    { name: 'Parents', value: mockAnalyticsData.userAnalytics.usersByRole.parents },
   ];
 
   const studentColumns = [
@@ -103,64 +126,110 @@ export function AnalyticsPage() {
     { key: 'classesAssigned', header: 'Classes', sortable: true },
   ];
 
+  const renderUserSummaryCard = ({
+    title,
+    value,
+    subtitle,
+    icon: Icon,
+    color,
+    metricKey,
+  }: {
+    title: string;
+    value: string | number;
+    subtitle?: string;
+    icon: typeof Users;
+    color: string;
+    metricKey?: 'total' | 'active' | 'inactive';
+  }) => (
+    <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6 lg:items-center">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-lg shrink-0" style={{ backgroundColor: `${color}20` }}>
+            <Icon size={24} style={{ color }} />
+          </div>
+          <div>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{title}</p>
+            <h3 className={`mt-1 text-3xl ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</h3>
+            {subtitle && <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{subtitle}</p>}
+          </div>
+        </div>
+
+        {metricKey && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            {roleMetrics.map((role) => {
+              const metricValue = role[metricKey];
+              const progress = Math.round((metricValue / Number(value)) * 100);
+
+              return (
+                <div
+                  key={`${metricKey}-${role.label}`}
+                  className={`relative overflow-hidden rounded-lg border px-4 py-3.5 transition-shadow hover:shadow-sm ${
+                    isDark ? 'border-gray-700 bg-gray-900/40' : 'border-gray-200 bg-white'
+                  }`}
+                >
+                  <div className="relative flex items-end justify-between gap-4">
+                    <div>
+                      <p className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{role.label}</p>
+                      <p className="text-2xl leading-none" style={{ color: role.color }}>
+                        {metricValue.toLocaleString()}
+                      </p>
+                    </div>
+                    <span className={`pb-1 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{progress}%</span>
+                  </div>
+                  <div className={`mt-3 h-1.5 overflow-hidden rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${progress}%`,
+                        backgroundColor: role.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard
-          title="Total Users"
-          value={mockAnalyticsData.userAnalytics.totalUsers.toLocaleString()}
-          icon={Users}
-          color="#25476a"
-          trend={{ value: 8.2, isPositive: true }}
-        />
-        <KPICard
-          title="Active Users"
-          value={mockAnalyticsData.userAnalytics.activeUsers.toLocaleString()}
-          icon={Activity}
-          color="#38aae1"
-          trend={{ value: 12.5, isPositive: true }}
-        />
-        <KPICard
-          title="Total Students"
-          value={mockAnalyticsData.studentAnalytics.total.toLocaleString()}
-          icon={GraduationCap}
-          color="#feb139"
-          trend={{ value: 5.3, isPositive: true }}
-        />
-        <KPICard
-          title="New Registrations"
-          value={mockAnalyticsData.userAnalytics.newRegistrations90Days}
-          icon={TrendingUp}
-          color="#25476a"
-          subtitle="Last 90 days"
-          trend={{ value: 15.8, isPositive: true }}
-        />
-      </div>
+      <div className="space-y-4">
+        {renderUserSummaryCard({
+          title: 'Users by Role',
+          value: mockAnalyticsData.userAnalytics.totalUsers.toLocaleString(),
+          icon: Users,
+          color: '#25476a',
+          metricKey: 'total',
+        })}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className={`p-6 lg:col-span-2 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>User Growth Trends</h3>
-          <AreaChartComponent
-            data={mockAnalyticsData.chartData.userGrowth}
-            xKey="month"
-            areas={[
-              { dataKey: 'students', color: '#25476a', name: 'Students' },
-              { dataKey: 'mentors', color: '#feb139', name: 'Mentors' },
-              { dataKey: 'teachers', color: '#38aae1', name: 'Teachers' },
-              { dataKey: 'parents', color: '#6B7280', name: 'Parents' },
-            ]}
-            height={300}
-          />
-        </Card>
+        {renderUserSummaryCard({
+          title: 'Active Users',
+          value: mockAnalyticsData.userAnalytics.activeUsers.toLocaleString(),
+          subtitle: 'Last 90 days',
+          icon: Activity,
+          color: '#38aae1',
+          metricKey: 'active',
+        })}
 
-        <Card className={`p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <h3 className={`text-lg mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Users by Role</h3>
-          <DonutChartComponent
-            data={roleDistributionData}
-            colors={['#25476a', '#feb139', '#38aae1', '#6B7280']}
-            height={300}
-          />
-        </Card>
+        {renderUserSummaryCard({
+          title: 'Inactive Users',
+          value: mockAnalyticsData.userAnalytics.inactiveUsers.toLocaleString(),
+          subtitle: 'Last 90 days',
+          icon: Users,
+          color: '#6B7280',
+          metricKey: 'inactive',
+        })}
+
+        {renderUserSummaryCard({
+          title: 'New User Registration',
+          value: mockAnalyticsData.userAnalytics.newRegistrations90Days,
+          subtitle: 'Last 90 days',
+          icon: TrendingUp,
+          color: '#feb139',
+        })}
       </div>
 
       <Tabs defaultValue="students" className="space-y-6">
