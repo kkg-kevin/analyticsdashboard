@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   BarChart3,
   Building2,
-  GraduationCap,
   LogOut,
   X,
 } from 'lucide-react';
@@ -25,10 +24,7 @@ export function Sidebar() {
     <div className={`flex flex-col h-full ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-r`}>
       <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: isDark ? '#1F2937' : '#E5E7EB' }}>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#25476a' }}>
-            <GraduationCap className="text-white" size={20} />
-          </div>
-          <span className={`text-xl ${isDark ? 'text-white' : 'text-gray-900'}`}>DigiFunzi</span>
+          <img src="/Logo-image.png" alt="DigiFunzi" className="h-8 w-auto object-contain" />
         </div>
         <Button
           variant="ghost"
@@ -73,7 +69,7 @@ export function Sidebar() {
           className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full transition-colors ${
             isDark ? 'text-gray-400 hover:bg-gray-800 hover:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
           }`}
-        >
+        >``
           <LogOut size={20} />
           <span>Logout</span>
         </button>
