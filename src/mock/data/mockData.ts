@@ -134,7 +134,7 @@ const generateLessonSchedules = (): LessonSchedule[] => {
 export const mockCenters: Center[] = [
   {
     id: 'center-1',
-    name: 'DigiFunzi Nairobi Central',
+    name: 'WoodCreek International School',
     location: 'Nairobi, Kenya',
     totalStudents: 28,
     technicalMentors: 4,
@@ -148,8 +148,8 @@ export const mockCenters: Center[] = [
     classes: {
       crib: {
         totalStudents: 9,
-        mentorName: 'John Doe',
-        teacherName: 'Alice Cooper',
+        mentorName: 'John Kamau',
+        teacherName: 'Alice Akinyi',
         sessionCompletionRate: 78,
         assignmentCompletionRate: 72,
         assignmentRetryRate: 15,
@@ -157,8 +157,8 @@ export const mockCenters: Center[] = [
       },
       clicker: {
         totalStudents: 11,
-        mentorName: 'Jane Smith',
-        teacherName: 'Bob Williams',
+        mentorName: 'Josphine Wairimu',
+        teacherName: 'Bob Otieno',
         sessionCompletionRate: 82,
         assignmentCompletionRate: 76,
         assignmentRetryRate: 12,
@@ -177,8 +177,8 @@ export const mockCenters: Center[] = [
   },
   {
     id: 'center-2',
-    name: 'DigiFunzi Mombasa',
-    location: 'Mombasa, Kenya',
+    name: 'Foresight Academy',
+    location: 'Nairobi, Kenya',
     totalStudents: 25,
     technicalMentors: 3,
     teachers: 2,
@@ -192,7 +192,7 @@ export const mockCenters: Center[] = [
       crib: {
         totalStudents: 8,
         mentorName: 'Sarah Johnson',
-        teacherName: 'Dan Garcia',
+        teacherName: 'Hasssan Juma',
         sessionCompletionRate: 75,
         assignmentCompletionRate: 70,
         assignmentRetryRate: 18,
@@ -200,8 +200,8 @@ export const mockCenters: Center[] = [
       },
       clicker: {
         totalStudents: 10,
-        mentorName: 'David Lee',
-        teacherName: 'Eva Rodriguez',
+        mentorName: 'Mary Mwenda',
+        teacherName: 'Eva Njogu',
         sessionCompletionRate: 80,
         assignmentCompletionRate: 74,
         assignmentRetryRate: 14,
@@ -209,8 +209,8 @@ export const mockCenters: Center[] = [
       },
       quest: {
         totalStudents: 7,
-        mentorName: 'Emily Davis',
-        teacherName: 'Frank Martinez',
+        mentorName: 'Emily Nduta',
+        teacherName: 'Frank Otieno',
         sessionCompletionRate: 83,
         assignmentCompletionRate: 78,
         assignmentRetryRate: 10,
@@ -220,7 +220,7 @@ export const mockCenters: Center[] = [
   },
   {
     id: 'center-3',
-    name: 'DigiFunzi Kisumu',
+    name: 'Holy Trinity Academy Kericho',
     location: 'Kisumu, Kenya',
     totalStudents: 32,
     technicalMentors: 4,
@@ -235,7 +235,7 @@ export const mockCenters: Center[] = [
       crib: {
         totalStudents: 11,
         mentorName: 'Robert Wilson',
-        teacherName: 'Grace Hernandez',
+        teacherName: 'Grace Kemboi',
         sessionCompletionRate: 82,
         assignmentCompletionRate: 78,
         assignmentRetryRate: 12,
@@ -243,8 +243,8 @@ export const mockCenters: Center[] = [
       },
       clicker: {
         totalStudents: 13,
-        mentorName: 'Lisa Anderson',
-        teacherName: 'Henry Lopez',
+        mentorName: 'Lisa Korir',
+        teacherName: 'Henry Abdi',
         sessionCompletionRate: 87,
         assignmentCompletionRate: 82,
         assignmentRetryRate: 9,
@@ -252,8 +252,8 @@ export const mockCenters: Center[] = [
       },
       quest: {
         totalStudents: 8,
-        mentorName: 'James Taylor',
-        teacherName: 'Alice Cooper',
+        mentorName: 'James Jenga',
+        teacherName: 'Alice Wako',
         sessionCompletionRate: 88,
         assignmentCompletionRate: 85,
         assignmentRetryRate: 7,
@@ -263,7 +263,7 @@ export const mockCenters: Center[] = [
   },
   {
     id: 'center-4',
-    name: 'DigiFunzi Nakuru',
+    name: 'Braeside International School',
     location: 'Nakuru, Kenya',
     totalStudents: 22,
     technicalMentors: 3,
@@ -306,7 +306,7 @@ export const mockCenters: Center[] = [
   },
   {
     id: 'center-5',
-    name: 'DigiFunzi Eldoret',
+    name: 'Ruiru Fairview Academy',
     location: 'Eldoret, Kenya',
     totalStudents: 28,
     technicalMentors: 4,
